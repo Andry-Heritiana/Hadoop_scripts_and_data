@@ -1,0 +1,97 @@
+Set Spark environment
+Open your bashrc configuration file.
+
+vim ~/.bashrc
+Add:
+
+export SPARK_HOME=/opt/spark
+export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+Activate the changes.
+
+source ~/.bashrc
+Step 3: Start a standalone master server
+You can now start a standalone master server using the start-master.sh command.
+
+$ start-master.sh 
+starting org.apache.spark.deploy.master.Master, logging to /opt/spark/logs/spark-root-org.apache.spark.deploy.master.Master-1-ubuntu.out
+The process will be listening on TCP port 8080.
+
+$ sudo ss -tunelp | grep 8080
+tcp   LISTEN  0       1                           *:8080                *:*      users:(("java",pid=8033,fd=238)) ino:41613 sk:5 v6only:0 <-> 
+The Web UI looks like below.
+
+Apache spark start master
+My Spark URL is spark://ubuntu:7077.
+
+Step 4: Starting Spark Worker Process
+The start-slave.sh command is used to start Spark Worker Process.
+
+$ start-slave.sh spark://ubuntu:7077
+starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-ubuntu.out
+If you don’t have the script in your $PATH, you can first locate it.
+
+$ sudo updatedb
+$ locate start-slave.sh
+/opt/spark/sbin/start-slave.sh
+You can also use the absolute path to run the script.
+
+Step 5: Using Spark shell
+Use the spark-shell command to access Spark Shell.
+
+$ /opt/spark/bin/spark-shell
+21/04/27 08:49:09 WARN Utils: Your hostname, ubuntu resolves to a loopback address: 127.0.1.1; using 10.10.10.2 instead (on interface eth0)
+21/04/27 08:49:09 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/opt/spark/jars/spark-unsafe_2.12-3.1.1.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+21/04/27 08:49:10 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+Spark context Web UI available at http://10.10.10.2:4040
+Spark context available as 'sc' (master = local[*], app id = local-1619513355938).
+Spark session available as 'spark'.
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 3.2.1
+      /_/
+
+Using Scala version 2.12.15 (OpenJDK 64-Bit Server VM, Java 11.0.14.1)
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala>
+If you’re more of a Python person, use pyspark.
+
+$ /opt/spark/bin/pyspark
+Python 3.8.10 (default, Jun  2 2021, 10:49:15)
+[GCC 9.4.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/opt/spark/jars/spark-unsafe_2.12-3.2.1.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+22/04/17 20:38:21 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.2.1
+      /_/
+
+Using Python version 3.8.10 (default, Jun  2 2021 10:49:15)
+Spark context Web UI available at http://ubuntu-20-04-02:4040
+Spark context available as 'sc' (master = local[*], app id = local-1650227902187).
+SparkSession available as 'spark'.
+Easily shut down the master and slave Spark processes using commands below.
+
+$ SPARK_HOME/sbin/stop-slave.sh
+$ SPARK_HOME/sbin/stop-master.sh
